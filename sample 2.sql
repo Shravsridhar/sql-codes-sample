@@ -42,7 +42,51 @@ Week SMALLINT,
 Month SMALLINT,
 Quarter SMALLINT,
 Year SMALLINT
-);-- Procedure creation --CREATE PROCEDURE dbo.pop_daterange(		@StartDate datetime,		@Count INT)ASBEGIN 	DECLARE @sd datetime, @c INT;	SET @sd = @StartDate;	SET @c =@Count ;	DECLARE @Counter INT = 0;	WHILE(@Counter< @c)	BEGIN		INSERT INTO DateRange VALUES(			dateadd(day,@Counter,@sd),   			DATEPART(WEEKDAY, dateadd(day,@Counter,@sd)),			DATEPART(WEEK, dateadd(day,@Counter,@sd)),			DATEPART(MONTH, dateadd(day,@Counter,@sd)),			DATEPART(QUARTER, dateadd(day,@Counter,@sd)),			DATEPART(YEAR, dateadd(day,@Counter,@sd)));		SET @Counter += 1;--		SET @StartDate = DATEADD(day ,@Counter+1 , @sd );		END		RETURN ;END-- executing the procedure --EXEC dbo.pop_daterange @StartDate ='2006-04-02',@Count ='20'-- to drop the procedure if required --DROP PROC dbo.pop_daterange-- to view the inserted data --select * from DateRange ;-- to delete the data if required --delete from DateRange;--- Probelm 3 ----- creation of required tables --CREATE TABLE Customer
+);
+
+-- Procedure creation --
+CREATE PROCEDURE dbo.pop_daterange
+(
+		@StartDate datetime,
+		@Count INT
+)
+AS
+BEGIN 
+	DECLARE @sd datetime, @c INT;
+	SET @sd = @StartDate;
+	SET @c =@Count ;
+	DECLARE @Counter INT = 0;
+	WHILE(@Counter< @c)
+	BEGIN
+		INSERT INTO DateRange VALUES(
+			dateadd(day,@Counter,@sd),
+   			DATEPART(WEEKDAY, dateadd(day,@Counter,@sd)),
+			DATEPART(WEEK, dateadd(day,@Counter,@sd)),
+			DATEPART(MONTH, dateadd(day,@Counter,@sd)),
+			DATEPART(QUARTER, dateadd(day,@Counter,@sd)),
+			DATEPART(YEAR, dateadd(day,@Counter,@sd)));
+		SET @Counter += 1;
+		END
+		RETURN ;
+END
+
+-- executing the procedure --
+EXEC dbo.pop_daterange @StartDate ='2006-04-02',@Count ='20'
+
+-- to drop the procedure if required --
+DROP PROC dbo.pop_daterange
+
+-- to view the inserted data --
+select * from DateRange ;
+
+
+-- to delete the data if required --
+delete from DateRange;
+
+--- Probelm 3 ---
+
+-- creation of required tables --
+CREATE TABLE Customer
 (CustomerID VARCHAR(20) PRIMARY KEY,
 CustomerLName VARCHAR(30),
 CustomerFName VARCHAR(30),
@@ -77,7 +121,7 @@ set saleorder.OrderAmountBeforeTax=(select SUM(inserted.quantity*inserted.unitpr
                                     from SaleOrderDetail
                                     join inserted
                                     on SaleOrderDetail.OrderID=inserted.OrderID
-									group by SaleOrderDetail.OrderID)
+				    group by SaleOrderDetail.OrderID)
 from inserted 
 where SaleOrder.OrderID=inserted.orderID
 END
